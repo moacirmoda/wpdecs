@@ -94,3 +94,31 @@ function get_descriptors_from_decs( $queryUrl ){
     return $xmlFile;
 
 }
+
+function get_the_wpdecs_terms() {
+    $post = get_post();
+
+    $wpdecs_terms = get_post_meta($post->ID, 'wpdecs_terms', true);
+    if($wpdecs_terms) {
+        return $wpdecs_terms;
+    }
+
+    return array();
+}
+
+function the_wpdecs_terms() {
+
+    print '<div class="wpdecs_terms">';
+    print '<h2>';
+    _e('DeCS Terms');
+    print '</h2>';
+
+    print '<ul>';
+    foreach(get_the_wpdecs_terms() as $terms) {
+        foreach($terms as $term) {
+            print "<li>$term</li>";
+        }
+    }
+    print '</ul>';
+    print '</div>';
+}

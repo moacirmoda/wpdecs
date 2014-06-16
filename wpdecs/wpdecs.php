@@ -9,6 +9,8 @@ Author URI: http://github.com/moacirmoda
 
 define('WPDECS_URL', plugins_url() . "/wpdecs");
 
+include_once 'functions.php';
+
 add_action('admin_menu', 'my_plugin_menu');
 function my_plugin_menu() {
 	add_options_page('My Options', 'WPDeCS', 'manage_options', 'wpdecs-options.php', 'wp_decs_options_call');
