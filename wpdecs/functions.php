@@ -2,6 +2,8 @@
 
 function get_descriptors_by_words($words, $lang){
 
+    $definition_len = 100;
+
     if(empty($lang)) {
         $lang = $this->language;
     }
@@ -14,9 +16,24 @@ function get_descriptors_by_words($words, $lang){
 
     foreach($xmlTree as $node){
 
-        $descriptors[(string) $node->tree->self->term_list->term] = array('tree_id'=>(string) $node['tree_id']);        
-        foreach($node->record_list->record->synonym_list->synonym as $synonym)
-        $descriptors[ (string) $synonym  ] = array('tree_id'=>(string) $node['tree_id']);
+        $definition = "";
+        if(!empty((string) $node->record_list->record->definition->occ['n']))
+            $definition = (string) $node->record_list->record->definition->occ['n'];
+
+        if(strlen($definition) >= $definition_len) {
+            $definition = substr($definition, 0, $definition_len-3) . "...";
+        }
+        
+        $descriptors[(string) $node->tree->self->term_list->term] = array(
+            'tree_id' => (string) $node['tree_id'], 
+        );        
+        
+        foreach($node->record_list->record->synonym_list->synonym as $synonym) {
+            $descriptors[ (string) $synonym  ] = array(
+                'tree_id' => (string) $node['tree_id'],
+                'definition' => $definition,
+            );
+        }
     }
 
     return array('descriptors'=>$descriptors);
