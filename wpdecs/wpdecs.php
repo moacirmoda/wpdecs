@@ -31,7 +31,10 @@ function decs_metabox() {
 }
 
 // display the metabox
-function decs_metabox_content( $post_id ) {
+function decs_metabox_content( $post ) {
+
+    $post_id = $post->ID;
+    
     // nonce field for security check, you can have the same
     // nonce field for all your meta boxes of same plugin
     wp_nonce_field( plugin_basename( __FILE__ ), 'myplugin_nonce' );
@@ -40,28 +43,26 @@ function decs_metabox_content( $post_id ) {
 }
 
 // save data from checkboxes
-add_action( 'save_post', 'decs_metabox_data' );
-function decs_metabox_data() {
+add_action( 'save_post', 'decs_metabox_data', 1, 2 );
+function decs_metabox_data($post_id, $post) {
 
     // check if this isn't an auto save
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
         return;
 
-    // // security check
-    // if ( !wp_verify_nonce( $_POST['myplugin_nonce'], plugin_basename( __FILE__ ) ) )
-    //     return;
+    // security check
+    if ( !wp_verify_nonce( $_POST['myplugin_nonce'], plugin_basename( __FILE__ ) ) )
+        return;
 
-    // // further checks if you like, 
-    // // for example particular user, role or maybe post type in case of custom post types
+    $terms = array();
+    if(isset($_POST['wpdecs_terms'])) {
+        $terms = $_POST['wpdecs_terms'];
+    }
 
-    // // now store data in custom fields based on checkboxes selected
-    // if ( isset( $_POST['my_plugin_paid_content'] ) )
-    //     update_post_meta( $post_id, 'my_plugin_paid_content', 1 );
-    // else
-    //     update_post_meta( $post_id, 'my_plugin_paid_content', 0 );
-
-    // if ( isset( $_POST['my_plugin_network_wide'] ) )
-    //     update_post_meta( $post_id, 'my_plugin_network_wide', 1 );
-    // else
-    //     update_post_meta( $post_id, 'my_plugin_network_wide', 0 );
+    // atualizando arvore de termos
+    if(!get_post_meta($post->ID, 'wpdecs_terms', true)) {
+        add_post_meta($post->ID, 'wpdecs_terms', $terms);
+    } else {
+        update_post_meta($post->ID, 'wpdecs_terms', $terms);
+    }
 }

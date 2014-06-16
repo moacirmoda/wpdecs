@@ -1,3 +1,5 @@
+<?php $wpdecs_terms = get_post_meta($post_id, 'wpdecs_terms', true); ?>
+
 <script>
 	$ = jQuery;
 	$(function(){
@@ -35,15 +37,13 @@
 		});
 	});
 		
-	var total_selected = 0;
+	var total_selected = <?php print count($wpdecs_terms); ?>;
 
 	// botao de selecionar termo
 	function select_term(id, term) {
 		
 		var el = '<span><a id="wpdecs_selected_'+total_selected+'" class="ntdelbutton" onclick="javascript: remove_selected(\'wpdecs_selected_'+total_selected+'\');">x</a> '+term;
-		el += '<input type="hidden" name="wpdecs_terms[]" value="'+id+'"></span>';
-
-		console.log(el);
+		el += '<input type="hidden" name="wpdecs_terms['+id+'][]" value="'+term+'"></span>';
 
 		$("#selected_terms").append(el);
 		total_selected += 1;
@@ -120,7 +120,16 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><div class="tagchecklist" id="selected_terms"></div></td>
+					<td><div class="tagchecklist" id="selected_terms">
+						<?php $count = 0; foreach($wpdecs_terms as $id => $terms): foreach($terms as $term): ?>
+							<span>
+								<a id="wpdecs_selected_<?= $count ?>" class="ntdelbutton" onclick="javascript: remove_selected('wpdecs_selected_<?= $count ?>');">x</a> <?= $term ?>
+								<input type="hidden" name="wpdecs_terms[<?= $id ?>][]" value="<?= $term ?>">
+							</span>
+						<?php $count++; endforeach; endforeach; ?>
+
+
+					</div></td>
 				</tr>
 			</tbody>
 		</table>
