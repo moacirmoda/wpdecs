@@ -95,10 +95,15 @@ function get_descriptors_from_decs( $queryUrl ){
 
 }
 
-function get_the_wpdecs_terms() {
-    $post = get_post();
+function get_the_wpdecs_terms($id=false) {
 
-    $wpdecs_terms = get_post_meta($post->ID, 'wpdecs_terms', true);
+    $post = get_post();
+    $post_id = $post->ID;
+    if($id)
+        $post_id = $id;
+    
+
+    $wpdecs_terms = get_post_meta($post_id, 'wpdecs_terms', true);
     if($wpdecs_terms) {
         return $wpdecs_terms;
     }
