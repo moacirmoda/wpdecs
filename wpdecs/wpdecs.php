@@ -56,6 +56,7 @@ function decs_metabox_data($post_id, $post) {
     if ( !wp_verify_nonce( $_POST['myplugin_nonce'], plugin_basename( __FILE__ ) ) )
         return;
 
+    // die(var_dump($_POST));
     $terms = array();
     if(isset($_POST['wpdecs_terms'])) {
         $terms = $_POST['wpdecs_terms'];
@@ -63,7 +64,7 @@ function decs_metabox_data($post_id, $post) {
 
     // atualizando arvore de termos
     if(!get_post_meta($post->ID, 'wpdecs_terms', true)) {
-        add_post_meta($post->ID, 'wpdecs_terms', $terms);
+        $return = add_post_meta($post->ID, 'wpdecs_terms', $terms, true);
     } else {
         update_post_meta($post->ID, 'wpdecs_terms', $terms);
     }
