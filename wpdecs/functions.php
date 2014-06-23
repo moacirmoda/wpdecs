@@ -41,13 +41,22 @@ function get_descriptors_by_words($words, $lang = ""){
         // tree id
         $descriptors[(string) $node->tree->self->term_list->term] = array(
             'tree_id' => (string) $node['tree_id'], 
-        );        
+        ); 
+
+        // langs
+        $langs = array();
+        foreach($node->record_list->record->descriptor_list->descriptor as $descriptor) {
+            $langs[(string) $descriptor['lang']] = (string) $descriptor;
+        }
+        
+
         
         foreach($node->record_list->record->synonym_list->synonym as $synonym) {
             $descriptors[ (string) $synonym  ] = array(
                 'tree_id' => (string) $node['tree_id'],
                 'definition' => $definition,
                 'qualifiers' => $qualifiers,
+                'lang' => $langs,
             );
         }
     }
@@ -56,27 +65,20 @@ function get_descriptors_by_words($words, $lang = ""){
 
 }
 
-function get_descriptors_by_tree_id($treeId, $lang = ""){
+function get_descriptors_lang_by_tree_id($id) {
 
-    $descriptors = array(); 
+    $xmlFile = get_descriptors_from_decs( 'http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs/?tree_id=' . urlencode($id) ); 
+    $xmlTree = $xmlFile->xpath("/decsvmx/decsws_response/record_list");
 
     $result = array();
+    foreach($xmlTree as $node) {
 
-    $xmlFile = get_descriptors_from_decs( 'http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs?tree_id=' . $treeId . "&lang=" . $lang );
+        foreach($node->record->descriptor_list->descriptor as $descriptor) {
+            $result[(string) $descriptor['lang']] = (string) $descriptor;
+        }
+    }
 
-    $term = $xmlFile->xpath("/decsvmx/decsws_response/tree/self/term_list[@lang='".$lang."']/term");
-    $definition = $xmlFile->xpath("/decsvmx/decsws_response/record_list/record/definition/occ/@n");
-    $descendants = $xmlFile->xpath("/decsvmx/decsws_response/tree/descendants/term_list[@lang='".$lang."']/term");
-
-    foreach($descendants as $descendant)
-        $descriptors[ (string) $descendant ] = array('tree_id'=>(string) $descendant['tree_id']);         
-
-    $result['definition'] = (string) $definition[0];
-    $result['term'] = (string) $term[0];
-    $result['descriptors'] = $descriptors;
-
-    return array('result'=>$result);
-
+    return $result;
 }
 
 function get_descriptors_from_decs( $queryUrl ){

@@ -13,7 +13,7 @@ if( isset( $_GET['words'] ) ) {
 	$resultado = get_descriptors_by_words( $_GET['words'], $lang );
 
 } elseif( isset($_GET['treeid']) ) {
-	$resultado = get_descriptors_by_tree_id( $_GET['treeid'], $lang );
+	$resultado = get_descriptors_lang_by_tree_id( $_GET['treeid'] );
 
 } 
 

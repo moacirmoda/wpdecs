@@ -1,11 +1,11 @@
 <?php $wpdecs_terms = get_post_meta($post_id, 'wpdecs_terms', true); ?>
 
 <script>
+	var webservice_url = "<?php print WPDECS_URL; ?>/webservice.php";
+	
 	$ = jQuery;
 	$(function(){
 
-		var webservice_url = "<?php print WPDECS_URL; ?>/webservice.php";
-		
 		// submit form
 		$("#wpdecs_submit").click(function(e){
 			e.preventDefault();
@@ -30,6 +30,7 @@
 						$("#result_example_title").html(item);
 						$("#result_example_definition").html(content.definition);
 						$("#see_qualifiers").attr('onclick', 'javascript: show_qualifiers("ql_'+count+'");');
+						
 
 						// qualifiers
 						var ql = "<ul>";
@@ -39,7 +40,8 @@
 						ql += "</ul>";
 
 						var ql_html = "<tr id='ql_"+count+"' style='display:none'><td class='qualifiers' colspan='5'>"+ql+"</td></tr>";
-						$("#search_results").append("<tr data-id='"+content.tree_id+"'>"+$("#result_example").html()+"</tr>"+ql_html);
+						// append result
+						$("#search_results").append("<tr class='row-result' data-id='"+content.tree_id+"'>"+$("#result_example").html()+"</tr>"+ql_html);
 
 						count += 1;
 					}
@@ -59,10 +61,29 @@
 
 	// botao de selecionar termo
 	function select_term(id, term) {
-		
+	
 		var el = '<span><a id="wpdecs_selected_'+total_selected+'" class="ntdelbutton" onclick="javascript: remove_selected(\'wpdecs_selected_'+total_selected+'\');">x</a> '+term;
-		var qualifiers = $('input[data-term-id="'+id+'"]:checked');
+		
+		// lang
+		$.ajax({
+			url: webservice_url,
+			async : false,
+			context: document.body,
+		    data: { 
+		        treeid: id
+		    },
+		    cache: false,
+		    type: "GET",
+		    success: function(data) {
+				for(l in data) {
+					el += '<input type="hidden" name="wpdecs_terms['+id+'][lang]['+l+']" value="'+data[l]+'">';
+					console.log(el);
+				}
+		    }
+		});
+		
 
+		var qualifiers = $('input[data-term-id="'+id+'"]:checked');
 		qualifiers.each(function(){
 			el += '<input type="hidden" name="wpdecs_terms['+id+'][qualifier][]" value="'+$(this).val()+'">';
 		});
@@ -100,7 +121,7 @@
 	.words table tr{
 		line-height: 200%;
 	}
-	.words table tr[data-id=*]:nth-child(2n){
+	.words table .row-result:nth-child(2n){
 		background-color: #f3f3f3;
 	}
 	.words table tbody tr td:nth-child(3) {
@@ -111,6 +132,7 @@
   		display:inline;
   		width: 20%;
   		text-align: left;
+  		margin: 0 10px;
 	}
 </style>
 
@@ -139,6 +161,7 @@
 				</tr>
 				
 				<tr style="display:none" id="result_example">
+					
 					<td><input type="button" class="select_term" value="+" onclick="javascript: select_term(this);"></td>
 					<td><input type="button" id="see_qualifiers" value="Q"></td>
 					<td id="result_example_title"></td>
@@ -179,8 +202,15 @@
 								}?>
 								
 								<input type="hidden" name="wpdecs_terms[<?= $id ?>][term]" value="<?= $term['term'] ?>">
+								
+								<!-- qualifiers -->
 								<?php foreach($term['qualifier'] as $ql) : ?>
 									<input type="hidden" name="wpdecs_terms[<?= $id ?>][qualifier][]" value="<?= $ql ?>">
+								<?php endforeach; ?>
+
+								<!-- langs -->
+								<?php foreach($term['lang'] as $key => $value) : ?>
+									<input type="hidden" name="wpdecs_terms[<?= $id ?>][lang][<?= $key ?>]" value="<?= $value ?>">
 								<?php endforeach; ?>
 								
 
