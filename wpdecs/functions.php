@@ -9,7 +9,7 @@ $QUALIFIER_LIST = array(
 function get_descriptors_by_words($words, $lang = ""){
 
     global $QUALIFIER_LIST;
-    $definition_len = 100;
+    $definition_len = 10000000;
 
     if(!array_key_exists($lang, $QUALIFIER_LIST)) {
         $QUALIFIER_LIST = $QUALIFIER_LIST['p'];
@@ -37,26 +37,33 @@ function get_descriptors_by_words($words, $lang = ""){
         if(strlen($definition) >= $definition_len) {
             $definition = substr($definition, 0, $definition_len-3) . "...";
         }
-        
-        // tree id
-        $descriptors[(string) $node->tree->self->term_list->term] = array(
-            'tree_id' => (string) $node['tree_id'], 
-        ); 
 
         // langs
         $langs = array();
         foreach($node->record_list->record->descriptor_list->descriptor as $descriptor) {
             $langs[(string) $descriptor['lang']] = (string) $descriptor;
         }
-        
 
+        if($node->tree->self->term_list->term['leaf'] != "true") {
+            continue;
+        }
         
+        // tree id
+        $descriptors[(string) $node->tree->self->term_list->term] = array(
+            'tree_id' => (string) $node['tree_id'], 
+            'definition' => $definition,
+            'qualifiers' => $qualifiers,
+            'lang' => $langs,
+            'synonym' => false,
+        ); 
+
         foreach($node->record_list->record->synonym_list->synonym as $synonym) {
             $descriptors[ (string) $synonym  ] = array(
                 'tree_id' => (string) $node['tree_id'],
                 'definition' => $definition,
                 'qualifiers' => $qualifiers,
                 'lang' => $langs,
+                'synonym' => true,
             );
         }
     }

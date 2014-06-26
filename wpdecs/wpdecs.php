@@ -62,12 +62,16 @@ function decs_metabox_data($post_id, $post) {
         $terms = $_POST['wpdecs_terms'];
     }
 
+    // die(print_r($terms));
+
     // atualizando arvore de termos
     if(!get_post_meta($post->ID, 'wpdecs_terms', true)) {
         $return = add_post_meta($post->ID, 'wpdecs_terms', $terms, true);
 
         // ATENÇÃO: quando muda a estrutura do array, é preciso dar um add EM SEGUIDA um update.
-        // update_post_meta($post->ID, 'wpdecs_terms', $terms);
+        if(!$return) {
+            update_post_meta($post->ID, 'wpdecs_terms', $terms);
+        }
     } else {
         update_post_meta($post->ID, 'wpdecs_terms', $terms);
     }
