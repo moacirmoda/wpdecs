@@ -1,5 +1,5 @@
 <?php $wpdecs_terms = get_post_meta($post_id, 'wpdecs_terms', true); ?>
-<?php // var_dump($wpdecs_terms); ?>
+<?php //var_dump($wpdecs_terms); ?>
 
 <script>
 	var webservice_url = "<?php print WPDECS_URL; ?>/webservice.php";
@@ -58,13 +58,13 @@
 						$("#see_qualifiers").attr('onclick', 'javascript: show_qualifiers("ql_'+count+'");');
 						var ql = "<ul>";
 						for(qualifier in content.qualifiers) {
-							ql += '<li class="qualifier"><input type="checkbox" data-term-id="'+content.tree_id+'" value="'+qualifier+'"> ' + content.qualifiers[qualifier] + '</li>';
+							ql += '<li class="qualifier"><input type="checkbox" data-term-id="'+content.tree_id+"|"+item+'" value="'+qualifier+'"> ' + content.qualifiers[qualifier] + '</li>';
 						}
 						ql += "</ul>";
 
 						var ql_html = "<tr id='ql_"+count+"' style='display:none'><td class='qualifiers' colspan='5'>"+ql+"</td></tr>";
 						// append result
-						$("#search_results").append("<tr class='row-result' data-id='"+content.tree_id+"'>"+$("#result_example").html()+"</tr>"+ql_html);
+						$("#search_results").append("<tr class='row-result' data-id='"+content.tree_id+"|"+item+"'>"+$("#result_example").html()+"</tr>"+ql_html);
 
 						count += 1;
 					}
@@ -91,9 +91,28 @@
 	// botao de selecionar termo
 	function select_term(id, term) {
 	
-		var el = '<span><a id="wpdecs_selected_'+total_selected+'" class="ntdelbutton" onclick="javascript: remove_selected(\'wpdecs_selected_'+total_selected+'\');">x</a> '+term;
-
 		id_composto = id +"|"+term;
+		var el = '<span>';
+
+		// list qualifiers
+		qualifiers_print = [];
+		var qualifiers = $('input[data-term-id="'+id_composto+'"]:checked');
+		qualifiers.each(function(){
+			
+			el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][qualifier][]" value="'+$(this).val()+'">';
+
+			// push qualifier in list that be printed
+			qualifiers_print.push($(this).val());
+		});
+		
+		if(qualifiers_print.length < 1) {
+			qualifiers_print = "";
+		} else {
+			qualifiers_print = "("+qualifiers_print.join('/')+")";
+		}
+
+		// starting item
+		el += '<a id="wpdecs_selected_'+total_selected+'" class="ntdelbutton" onclick="javascript: remove_selected(\'wpdecs_selected_'+total_selected+'\');">x</a> '+term + " " + qualifiers_print;
 		
 		// lang
 		$.ajax({
@@ -110,12 +129,6 @@
 					el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][lang]['+l+']" value="'+data[l]+'">';
 				}
 		    }
-		});
-		
-
-		var qualifiers = $('input[data-term-id="'+id_composto+'"]:checked');
-		qualifiers.each(function(){
-			el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][qualifier][]" value="'+$(this).val()+'">';
 		});
 
 		el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][term]" value="'+term+'">';
@@ -206,14 +219,7 @@
 								<a id="wpdecs_selected_<?= $count ?>" class="ntdelbutton" onclick="javascript: remove_selected('wpdecs_selected_<?= $count ?>');">x</a> <?= $term['term'] ?> 
 								<?php if(isset($term['qualifier'])) {
 									// printing qualifiers, if exist
-									
-									$print_ql = "";
-									foreach($term['qualifier'] as $ql) {
-										$print_ql .= $ql . '/';
-									}
-									
-									$print_ql = trim($print_ql, "/");
-									print "($print_ql)";
+									print "(" . join("/", $term['qualifier']) . ")";
 								}?>
 								
 								<input type="hidden" name="wpdecs_terms[<?= $id ?>][term]" value="<?= $term['term'] ?>">

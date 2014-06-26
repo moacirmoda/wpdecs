@@ -141,16 +141,29 @@ function get_the_wpdecs_terms($id=false) {
 function the_wpdecs_terms() {
 
     print '<div class="wpdecs_terms">';
-    print '<h2>';
-    _e('DeCS Terms');
-    print '</h2>';
-
+    print '<h2>' . __('DeCS Terms') . '</h2>';
     print '<ul>';
-    foreach(get_the_wpdecs_terms() as $terms) {
-        foreach($terms as $term) {
-            print "<li>$term</li>";
+
+    
+    foreach(get_the_wpdecs_terms() as $term) {
+        
+        // print "<pre>";
+        // var_dump($term);
+
+        $print_ql = "";
+        if(isset($term['qualifier'])) {
+            print 1;
+            foreach($term['qualifier'] as $ql) {
+                $print_ql .= $ql . '/';
+            }
+            
+            $print_ql = trim($print_ql, "/");
         }
+        
+        print "<li>${term['term']} $print_ql</li>";
+        
     }
+
     print '</ul>';
     print '</div>';
 }
