@@ -7,6 +7,13 @@
 	$ = jQuery;
 	$(function(){
 
+		$('#wpdecs_word').keypress(function (e) {
+			if (e.which == 13) {
+				e.preventDefault();
+				$("#wpdecs_submit").trigger('click');
+			}
+		});
+
 		// submit form
 		$("#wpdecs_submit").click(function(e){
 			e.preventDefault();
