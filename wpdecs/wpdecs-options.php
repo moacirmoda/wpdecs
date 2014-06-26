@@ -4,7 +4,7 @@
         
         <table class="form-table">
             <tr valign="top">
-                <th scope="row"><?php _e('Default Language'); ?></th>
+                <th scope="row"><?php _e('Default Language', 'wpdecs'); ?></th>
                 <td>
                     <input type="text" name="wpdecs_default_language" value="<?php echo get_option('wpdecs_default_language'); ?>" />
                 </td>

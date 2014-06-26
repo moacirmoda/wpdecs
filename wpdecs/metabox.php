@@ -22,6 +22,8 @@
 					// limpando a tabela
 					$("#search_results tbody").empty();
 					$("#search_results tbody").hide();
+
+					var link_externo = "http://decs.bvs.br/cgi-bin/wxis1660.exe/?IsisScript=../cgi-bin/decsserver/decsserver.xis&path_database=/home/decs2014/www/bases/&path_cgibin=/home/decs2014/www/cgi-bin/decsserver/&path_data=/decsserver/&temp_dir=/tmp&debug=&clock=&client=&search_language=p&interface_language=p&navigation_bar=Y&format=LONG&show_tree_number=F&list_size=200&from=1&count=5&total=7&no_frame=T&task=hierarchic&previous_task=list_terms&previous_page=list_terms&mfn_tree=";
 					
 					var count=0;
 					for(item in data.descriptors) {
@@ -34,18 +36,19 @@
 						$("#result_example .select_term").attr('onclick', "javascript: select_term('"+content.tree_id+"', '"+item+"');");
 						$("#result_example_title").html(item);
 
-						console.log(content.synonym === false);
 						if(content.synonym == false) {
 							$("#result_example_definition").html(content.definition);
 
 						} else {
-							var synonym = ' <small><span title="<?php print __("Synonym", "wpdecs"); ?>">(s)</span></small> ';
+							var synonym = ' <small><span title="<?php _e("Synonym", "wpdecs"); ?>">(s)</span></small> ';
 							$("#result_example_title").html('<span class="synonym">'+$("#result_example_title").html()+synonym+'</span>');
 						}
 
-						$("#see_qualifiers").attr('onclick', 'javascript: show_qualifiers("ql_'+count+'");');
+						// external link
+						$("#result_example_link a").attr('href', link_externo+content.mfn);
 						
 						// qualifiers
+						$("#see_qualifiers").attr('onclick', 'javascript: show_qualifiers("ql_'+count+'");');
 						var ql = "<ul>";
 						for(qualifier in content.qualifiers) {
 							ql += '<li class="qualifier"><input type="checkbox" data-term-id="'+content.tree_id+'" value="'+qualifier+'"> ' + content.qualifiers[qualifier] + '</li>';
@@ -58,6 +61,12 @@
 
 						count += 1;
 					}
+
+					if(data.descriptors.length < 1) {
+						console.log(data.descriptors.length);
+						$("#search_results").append("<tr class='row-result'><td colspan=5><i><?php _e('No results', 'wpdecs'); ?></i></td></tr>");
+					}
+
 					// efeito no form
 					$("#search_results tbody").fadeIn('fast');
 				});
@@ -92,7 +101,6 @@
 		    success: function(data) {
 				for(l in data) {
 					el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][lang]['+l+']" value="'+data[l]+'">';
-					console.log(el);
 				}
 		    }
 		});
@@ -134,6 +142,9 @@
 	}
 	.words table tr{
 		line-height: 200%;
+	}
+	.words table tr:hover {
+		background-color: #f0f0f0;
 	}
 	.words table .row-result:nth-child(2n){
 		background-color: #f3f3f3;
@@ -237,7 +248,9 @@
 					<td id="result_example_title"></td>
 					
 					<td id="result_example_definition" class='definition'></td>
-					<td id="result_example_link"><a href="javascript:void(0);">Link Externo</a></td>
+					<td id="result_example_link">
+						<a href="javascript:void(0);" target="_blank" title="<?php _e("External Link", "wpdecs"); ?>"><?php _e("External Link", "wpdecs"); ?></a>
+					</td>
 				</tr>
 				
 			</thead>

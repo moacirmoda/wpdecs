@@ -44,6 +44,10 @@ function get_descriptors_by_words($words, $lang = ""){
             $langs[(string) $descriptor['lang']] = (string) $descriptor;
         }
 
+        // mfn
+        $mfn = (int) $node->record_list->record['mfn'];
+
+        // if not leaf, dont add in descriptors array
         if($node->tree->self->term_list->term['leaf'] != "true") {
             continue;
         }
@@ -55,6 +59,7 @@ function get_descriptors_by_words($words, $lang = ""){
             'qualifiers' => $qualifiers,
             'lang' => $langs,
             'synonym' => false,
+            'mfn' => $mfn,
         ); 
 
         foreach($node->record_list->record->synonym_list->synonym as $synonym) {
@@ -64,6 +69,7 @@ function get_descriptors_by_words($words, $lang = ""){
                 'qualifiers' => $qualifiers,
                 'lang' => $langs,
                 'synonym' => true,
+                'mfn' => $mfn,
             );
         }
     }
