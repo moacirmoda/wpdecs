@@ -45,7 +45,7 @@ function decs_metabox_content( $post ) {
 }
 
 // save data from checkboxes
-add_action( 'save_post', 'decs_metabox_data', 1, 2 );
+add_action( 'save_post', 'decs_metabox_data', 10, 2 );
 function decs_metabox_data($post_id, $post) {
 
     // check if this isn't an auto save
@@ -66,6 +66,7 @@ function decs_metabox_data($post_id, $post) {
 
     // atualizando arvore de termos
     if(!get_post_meta($post->ID, 'wpdecs_terms', true)) {
+        
         $return = add_post_meta($post->ID, 'wpdecs_terms', $terms, true);
 
         // ATENÇÃO: quando muda a estrutura do array, é preciso dar um add EM SEGUIDA um update.
@@ -75,4 +76,6 @@ function decs_metabox_data($post_id, $post) {
     } else {
         update_post_meta($post->ID, 'wpdecs_terms', $terms);
     }
+
+    return $post_id;
 }
