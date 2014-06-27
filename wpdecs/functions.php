@@ -152,12 +152,12 @@ function the_wpdecs_terms() {
 
         $print_ql = "";
         if(isset($term['qualifier'])) {
-            print 1;
             foreach($term['qualifier'] as $ql) {
                 $print_ql .= $ql . '/';
             }
             
             $print_ql = trim($print_ql, "/");
+            $print_ql = "($print_ql)";
         }
         
         print "<li>${term['term']} $print_ql</li>";
