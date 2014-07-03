@@ -51,8 +51,15 @@
 							$("#result_example_title").html('<span class="synonym">'+$("#result_example_title").html()+synonym+'</span>');
 						}
 
+						// mfn needs to be six digits to construct external link
+						var mfn = content.mfn.toString();
+						while(mfn.length != 6) {
+							mfn = "0" + mfn;
+						}
+						console.log(mfn);
+
 						// external link
-						$("#result_example_link a").attr('href', link_externo+content.mfn);
+						$("#result_example_link a").attr('href', link_externo+mfn);
 						
 						// qualifiers
 						$("#see_qualifiers").attr('onclick', 'javascript: show_qualifiers("ql_'+count+'");');
