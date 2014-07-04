@@ -209,11 +209,12 @@
 <div class="wrap">
 	<p><?php _e('Search and select words.', 'wpdecs'); ?></p>
 	
+	<?php $wpdecs_default_language = get_option('wpdecs_default_language'); ?>
 	<input type="text" name="word" id="wpdecs_word" class="code" size="40" value="dengue">
 	<select name="lang" id="wpdecs_lang" class="wpdecs_lang">
-		<option value="p"> <?php _e('Portuguese', 'wpdecs'); ?></option>
-		<option value="i"> <?php _e('English', 'wpdecs'); ?></option>
-		<option value="e"> <?php _e('Spanish', 'wpdecs'); ?></option>
+		<option <?php if($wpdecs_default_language == "p") print "selected='selected'"; ?> value="p"> <?php _e('Portuguese', 'wpdecs'); ?></option>
+        <option <?php if($wpdecs_default_language == "i") print "selected='selected'"; ?> value="i"> <?php _e('English', 'wpdecs'); ?></option>
+        <option <?php if($wpdecs_default_language == "e") print "selected='selected'"; ?> value="e"> <?php _e('Spanish', 'wpdecs'); ?></option>
 	</select>
 	<input type="button" class="button" id="wpdecs_submit" value="<?php _e('Search', 'wpdecs'); ?>">
 	
