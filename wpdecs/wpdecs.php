@@ -13,7 +13,7 @@ include_once 'functions.php';
 
 add_action('admin_menu', 'my_plugin_menu');
 function my_plugin_menu() {
-	add_options_page('My Options', 'WPDeCS', 'manage_options', 'wpdecs-options.php', 'wp_decs_options_call');
+	add_options_page(__('WPDeCS Options'), 'WPDeCS', 'manage_options', 'wpdecs-options.php', 'wp_decs_options_call');
 }
 function wp_decs_options_call() {
 	include "wpdecs-options.php";
@@ -22,14 +22,22 @@ function wp_decs_options_call() {
 // register the meta box
 add_action( 'add_meta_boxes', 'decs_metabox' );
 function decs_metabox() {
-    add_meta_box(
-        'decs_id',          // this is HTML id of the box on edit screen
-        'DeCS',    // title of the box
-        'decs_metabox_content',   // function to be called to display the checkboxes, see the function below
-        'post',        // on which edit screen the box should appear
-        'normal',      // part of page where the box should appear
-        'default'      // priority of the box
-    );
+    
+    $wpdecs_post_types = get_option('wpdecs_post_types');
+
+    if($wpdecs_post_types) {
+
+        foreach($wpdecs_post_types as $post_type) {
+            add_meta_box(
+                'decs_id',          // this is HTML id of the box on edit screen
+                'DeCS',    // title of the box
+                'decs_metabox_content',   // function to be called to display the checkboxes, see the function below
+                $post_type,        // on which edit screen the box should appear
+                'normal',      // part of page where the box should appear
+                'default'      // priority of the box
+            );
+        }
+    }
 }
 
 // display the metabox
