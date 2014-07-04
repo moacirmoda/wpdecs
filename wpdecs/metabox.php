@@ -55,8 +55,7 @@
 						var mfn = content.mfn.toString();
 						while(mfn.length != 6) {
 							mfn = "0" + mfn;
-						}
-						console.log(mfn);
+						}						
 
 						// external link
 						$("#result_example_link a").attr('href', link_externo+mfn);
@@ -77,7 +76,6 @@
 					}
 
 					if(data.descriptors.length < 1) {
-						console.log(data.descriptors.length);
 						$("#search_results").append("<tr class='row-result'><td colspan=5><i><?php _e('No results', 'wpdecs'); ?></i></td></tr>");
 					}
 
@@ -99,6 +97,17 @@
 	function select_term(id, term) {
 	
 		id_composto = id +"|"+term;
+
+		// if exist, remove and replace
+		$("input[type=hidden]").each(function(){
+			var e = $(this);
+			if(e.attr('name')) {
+				if(e.attr('name').indexOf(id_composto) > -1) {
+					e.parent('span').empty();
+				}
+			}
+		});
+
 		var el = '<span>';
 
 		// list qualifiers
