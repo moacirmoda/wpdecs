@@ -165,6 +165,10 @@
 
 </script>
 <style>
+	/* hiding decs term box */
+	label[for="decs_id-hide"], #decsdiv {
+		display: none;
+	}
 	.words table {
 		margin: 30px 0;
 		width: 100%;
