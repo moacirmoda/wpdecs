@@ -247,13 +247,13 @@
 			<tbody>
 				<tr>
 					<td><div class="tagchecklist" id="selected_terms">
-						<?php $count = 0; foreach($wpdecs_terms as $id => $term): ?>
+						<?php if(!empty($wpdecs_terms)): $count = 0; foreach($wpdecs_terms as $id => $term): ?>
 							<span>
 								
 								<a id="wpdecs_selected_<?= $count ?>" class="ntdelbutton" onclick="javascript: remove_selected('wpdecs_selected_<?= $count ?>');">x</a> <?= $term['term'] ?> 
 								<?php if(isset($term['qualifier'])) {
 									// printing qualifiers, if exist
-									print "(" . join("/", $term['qualifier']) . ")";
+									print "(" . join("/", array_keys($term['qualifier'])) . ")";
 								}?>
 								
 								<input type="hidden" name="wpdecs_terms[<?= $id ?>][term]" value="<?= $term['term'] ?>">
@@ -270,7 +270,7 @@
 								
 
 							</span>
-						<?php $count++; endforeach; ?>
+						<?php $count++; endforeach; endif; ?>
 
 
 					</div></td>
