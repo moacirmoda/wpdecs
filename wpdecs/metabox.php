@@ -76,7 +76,7 @@
 						$("#see_qualifiers").attr('onclick', 'javascript: show_qualifiers("ql_'+count+'");');
 						var ql = "<ul>";
 						for(qualifier in content.qualifiers) {
-							ql += '<li class="qualifier"><input type="checkbox" data-term-id="'+content.tree_id+"|"+item+'" value="'+qualifier+'"> ' + content.qualifiers[qualifier] + '</li>';
+							ql += '<li class="qualifier"><input type="checkbox" data-qualifier-name="'+content.qualifiers[qualifier]+'" data-qualifier-lang="'+lang+'" data-term-id="'+content.tree_id+"|"+item+'" value="'+qualifier+'"> ' + content.qualifiers[qualifier] + '</li>';
 						}
 						ql += "</ul>";
 
@@ -127,7 +127,8 @@
 		var qualifiers = $('input[data-term-id="'+id_composto+'"]:checked');
 		qualifiers.each(function(){
 			
-			el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][qualifier][]" value="'+$(this).val()+'">';
+			el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][qualifier]['+$(this).val()+'][name]" value="'+$(this).data('qualifier-name')+'">';
+			el += '<input type="hidden" name="wpdecs_terms['+id_composto+'][qualifier]['+$(this).val()+'][lang]" value="'+$(this).data('qualifier-lang')+'">';
 
 			// push qualifier in list that be printed
 			qualifiers_print.push($(this).val());
